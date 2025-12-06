@@ -1,6 +1,6 @@
-# 🐨 KoalaScrape
+# 🐨 Koala Scrape
 
-**KoalaScrape** is a powerful, modern, and easy-to-use web scraper extension for Google Chrome. It allows you to visually select data elements on any webpage, automatically crawl through pagination, and export clean, structured data in multiple formats.
+**Koala Scrape** is a powerful, modern, and easy-to-use web scraper extension for Google Chrome. It allows you to visually select data elements on any webpage, automatically crawl through pagination, and export clean, structured data in multiple formats.
 
 ## ✨ Features
 
@@ -46,3 +46,4 @@ Data is processed locally in your browser. Large datasets are handled efficientl
 
 ## 📝 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
