@@ -198,27 +198,28 @@ function extractData(card) {
 
   // 2. Children text
   els.forEach(el => {
-    // Ignore hidden elements
-    if (el.offsetParent === null) return;
+    // Ignore hidden elements (skip in jsdom where offsetParent might be undefined)
+    if (el.offsetParent === null && window.getComputedStyle) {
+       const style = window.getComputedStyle(el);
+       if (style.display === 'none' || style.visibility === 'hidden') return;
+    }
+
+    if (el.tagName === 'IMG' && el.src) {
+      addField("Image_Url", el.src);
+    }
+    if (el.tagName === 'A' && el.href) {
+      addField("Link_Url", el.href);
+    }
 
     // Get text from leaf nodes or specific elements
-    if (el.children.length === 0 && el.textContent?.trim()) {
+    if (el.children.length === 0 && el.textContent && el.textContent.trim()) {
       let label = "Text";
       const txt = el.textContent.trim();
 
       // Heuristics
-      if (txt.includes('$') || txt.includes('€') || txt.includes('CHF')) label = "Price";
-      else if (txt.includes('@')) label = "Email";
-      else if (el.tagName === 'H1' || el.tagName === 'H2' || el.tagName === 'H3') label = "Title";
-      else if (el.tagName === 'A') {
-        label = "Link";
-        addField("Link_Url", el.href);
-      }
-      else if (el.tagName === 'IMG' && el.src) {
-        label = "Image";
-        addField("Image_Url", el.src);
-        return; // Don't add text for images
-      }
+      if (/[$€£¥₹]/.test(txt) || /CHF/.test(txt)) label = "Price";
+      else if (/\S+@\S+\.\S+/.test(txt)) label = "Email";
+      else if (['H1', 'H2', 'H3', 'H4', 'H5'].includes(el.tagName)) label = "Title";
 
       addField(label, txt);
     }
@@ -235,43 +236,111 @@ function findRepeatingParent(el) {
     if (!curr.parentElement || curr.tagName === 'BODY') break;
     const p = curr.parentElement;
 
-    // Check siblings with same class/tag
-    const sibs = Array.from(p.children).filter(c =>
-      c !== curr &&
-      c.tagName === curr.tagName &&
-      c.className === curr.className &&
-      c.className !== "" // Avoid generic divs
-    );
+    // Check siblings with same tag
+    const siblings = Array.from(p.children).filter(c => c !== curr && c.tagName === curr.tagName);
 
-    if (sibs.length >= 2) return curr; // Found a list!
+    // If there are siblings with the same tag, check if they share at least one class, or if neither has classes
+    const hasSimilarSibling = siblings.some(c => {
+      const currClasses = curr.className && typeof curr.className === 'string' ? curr.className.split(/\s+/) : [];
+      const cClasses = c.className && typeof c.className === 'string' ? c.className.split(/\s+/) : [];
+      if (currClasses.length === 0 && cClasses.length === 0) return true;
+      return currClasses.some(cls => cClasses.includes(cls));
+    });
+
+    if (siblings.length >= 1 && hasSimilarSibling) return curr; // Found a list!
     curr = p;
   }
   return el;
 }
 
 function getCardSelector(el) {
-  if (el.className && typeof el.className === 'string' && el.className.trim()) {
-    const classes = el.className.trim().split(/\s+/);
-    // Filter out common utility classes if possible (hard without list)
-    // Use the most specific class combo
-    const cls = classes.join('.');
-    const sel = `${el.tagName}.${cls}`;
-    if (document.querySelectorAll(sel).length > 1) return sel;
+  const parent = el.parentElement;
+  if (!parent) return el.tagName.toLowerCase();
+
+  const parentSel = getUniqueSelector(parent);
+  let sel = el.tagName.toLowerCase();
+
+  // Find shared classes among siblings of same tag
+  const siblings = Array.from(parent.children).filter(c => c.tagName === el.tagName);
+  if (siblings.length > 1) {
+    const elClasses = el.className && typeof el.className === 'string' ? el.className.trim().split(/\s+/).filter(Boolean) : [];
+    // We only include classes that are present in at least one other sibling
+    const sharedClasses = elClasses.filter(cls => {
+      return siblings.some(s => s !== el && s.className && typeof s.className === 'string' && s.className.includes(cls));
+    });
+    if (sharedClasses.length > 0) {
+      sel += `.${sharedClasses.join('.')}`;
+    }
+  } else {
+    // fallback if no siblings (shouldn't happen for lists)
+    if (el.className && typeof el.className === 'string') {
+       const classes = el.className.trim().split(/\s+/).filter(Boolean);
+       if (classes.length > 0) sel += `.${classes.join('.')}`;
+    }
   }
-  // Fallback to nth-child path if needed, but simple tag is better if unique enough
-  return el.tagName;
+
+  return `${parentSel} > ${sel}`;
 }
 
 function getUniqueSelector(el) {
-  // Optimized for buttons
+  if (!el) return '';
   if (el.id) return `#${el.id}`;
-  let sel = el.tagName.toLowerCase();
-  if (el.className && typeof el.className === 'string' && el.className.trim()) {
-    sel += `.${el.className.trim().split(/\s+/)[0]}`;
+
+  const path = [];
+  let curr = el;
+  while (curr && curr.nodeType === 1 && curr.tagName !== 'BODY' && curr.tagName !== 'HTML') {
+    let selector = curr.tagName.toLowerCase();
+    if (curr.id) {
+      selector = `#${curr.id}`;
+      path.unshift(selector);
+      break;
+    }
+
+    let hasUniqueAttr = false;
+    const attrs = ['name', 'data-testid', 'aria-label', 'placeholder', 'title', 'role'];
+    for (let attr of attrs) {
+      const val = curr.getAttribute(attr);
+      if (val) {
+        const escapedVal = val.replace(/"/g, '\\"');
+        selector += `[${attr}="${escapedVal}"]`;
+        hasUniqueAttr = true;
+        break;
+      }
+    }
+
+    if (!hasUniqueAttr && curr.className && typeof curr.className === 'string') {
+      const classes = curr.className.trim().split(/\s+/).filter(c => c && !c.includes(':') && !c.includes('['));
+      if (classes.length > 0) {
+        selector += `.${classes.join('.')}`;
+      }
+    }
+
+    let nth = 1;
+    let sibling = curr.previousElementSibling;
+    while (sibling) {
+      if (sibling.tagName === curr.tagName) nth++;
+      sibling = sibling.previousElementSibling;
+    }
+    let nextSibling = curr.nextElementSibling;
+    let hasSameTagSibling = false;
+    while (nextSibling) {
+      if (nextSibling.tagName === curr.tagName) {
+        hasSameTagSibling = true;
+        break;
+      }
+      nextSibling = nextSibling.nextElementSibling;
+    }
+
+    if (nth > 1 || hasSameTagSibling) {
+        selector += `:nth-of-type(${nth})`;
+    }
+
+    path.unshift(selector);
+    curr = curr.parentElement;
   }
-  // Add attributes if needed
-  if (el.getAttribute('aria-label')) sel += `[aria-label="${el.getAttribute('aria-label')}"]`;
-  return sel;
+
+  if (path.length === 0) return 'body';
+  return path.join(' > ');
 }
 
 function setMode(mode) {
