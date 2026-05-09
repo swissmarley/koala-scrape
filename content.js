@@ -198,10 +198,11 @@ function extractData(card) {
 
   // 2. Children text
   els.forEach(el => {
-    // Ignore hidden elements (skip in jsdom where offsetParent might be undefined)
-    if (el.offsetParent === null && window.getComputedStyle) {
-       const style = window.getComputedStyle(el);
-       if (style.display === 'none' || style.visibility === 'hidden') return;
+    // Ignore hidden elements
+    // Use offsetWidth/offsetHeight for performant visibility check in browser.
+    // In node/jsdom environments (where dimensions are 0), fallback to checking if it's actually running in browser
+    if (el.offsetWidth === 0 && el.offsetHeight === 0 && typeof chrome !== 'undefined' && chrome.runtime) {
+        return;
     }
 
     if (el.tagName === 'IMG' && el.src) {
@@ -219,7 +220,7 @@ function extractData(card) {
       // Heuristics
       if (/[$€£¥₹]/.test(txt) || /CHF/.test(txt)) label = "Price";
       else if (/\S+@\S+\.\S+/.test(txt)) label = "Email";
-      else if (['H1', 'H2', 'H3', 'H4', 'H5'].includes(el.tagName)) label = "Title";
+      else if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(el.tagName)) label = "Title";
 
       addField(label, txt);
     }
@@ -266,10 +267,7 @@ function getCardSelector(el) {
     const elClasses = el.className && typeof el.className === 'string' ? el.className.trim().split(/\s+/).filter(Boolean) : [];
     // We only include classes that are present in at least one other sibling
     const sharedClasses = elClasses.filter(cls => {
-      return siblings.some(s => {
-        if (s === el || typeof s.className !== 'string') return false;
-        return s.className.split(/\s+/).includes(cls);
-      });
+      return siblings.some(s => s !== el && s.className && typeof s.className === 'string' && s.className.includes(cls));
     });
     if (sharedClasses.length > 0) {
       sel += `.${sharedClasses.join('.')}`;
