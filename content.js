@@ -266,7 +266,10 @@ function getCardSelector(el) {
     const elClasses = el.className && typeof el.className === 'string' ? el.className.trim().split(/\s+/).filter(Boolean) : [];
     // We only include classes that are present in at least one other sibling
     const sharedClasses = elClasses.filter(cls => {
-      return siblings.some(s => s !== el && s.className && typeof s.className === 'string' && s.className.includes(cls));
+      return siblings.some(s => {
+        if (s === el || typeof s.className !== 'string') return false;
+        return s.className.split(/\s+/).includes(cls);
+      });
     });
     if (sharedClasses.length > 0) {
       sel += `.${sharedClasses.join('.')}`;
