@@ -90,6 +90,28 @@ print(json.dumps(out))`;
   }
 });
 
+test('XLSX keeps formula-like text as text (quotePrefix) without altering values', async () => {
+  const bytes = await toXLSX([{ name: '=Head' }, { name: 'B' }], [
+    ['=HYPERLINK("x")', '-5'],
+    ['+1 (555)', '@cmd'],
+    ['plain', '+42'],
+  ]);
+  const dir = mkdtempSync(join(tmpdir(), 'koala-xlsx-'));
+  const file = join(dir, 'formula.xlsx');
+  writeFileSync(file, bytes);
+  const script = `
+import sys, json, openpyxl
+ws = openpyxl.load_workbook(sys.argv[1]).active
+print(json.dumps([[[c.value, bool(c.quotePrefix), bool(c.font.b)] for c in row] for row in ws.iter_rows()]))`;
+  const cells = JSON.parse(execFileSync('python3', ['-I', '-c', script, file], { encoding: 'utf8' }));
+  assert.deepEqual(cells, [
+    [['=Head', true, true], ['B', false, true]],
+    [['=HYPERLINK("x")', true, false], [-5, false, false]],
+    [['+1 (555)', true, false], ['@cmd', true, false]],
+    [['plain', false, false], ['+42', false, false]],
+  ]);
+});
+
 test('mergeRows aligns by column name, adds new columns and dedupes', () => {
   const ds = emptyDataset();
   const seen = new Set();

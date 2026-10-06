@@ -38,6 +38,7 @@ data to **Excel**, **CSV** or **JSON**. Everything runs locally in your browser.
   - **CSV** in UTF-8 with a BOM, protected against formula injection.
   - **JSON**.
   - **Copy** to paste into Excel or Google Sheets.
+  - Scraped text that looks like a formula (`=…`, `+…`, `@…`) never runs as one in any of these formats.
 - **Full-page data viewer** with search, sorting, paging, clickable links and image thumbnails.
 
 ## 📥 Installation

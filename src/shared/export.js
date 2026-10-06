@@ -12,13 +12,16 @@
 
 /**
  * Spreadsheet apps execute cells starting with = + - @ as formulas. Scraped
- * text is untrusted, so prefix such cells with an apostrophe (OWASP advice).
- * Plain numbers like "-12.5" are left alone.
+ * text is untrusted, so such cells are neutralised (OWASP advice). Plain
+ * numbers like "-12.5" are left alone.
  */
+function looksLikeFormula(s) {
+  return /^[=@\t\r]/.test(s) || (/^[+-]/.test(s) && !/^[+-][\d\s.,]*$/.test(s));
+}
+
+/** CSV / TSV: prefix with an apostrophe. */
 function neutralizeFormula(s) {
-  if (/^[=@\t\r]/.test(s)) return "'" + s;
-  if (/^[+-]/.test(s) && !/^[+-][\d\s.,]*$/.test(s)) return "'" + s;
-  return s;
+  return looksLikeFormula(s) ? "'" + s : s;
 }
 
 function csvCell(value, delimiter) {
@@ -191,12 +194,20 @@ export function columnLetter(index) {
 
 const NUMERIC = /^-?(?:0|[1-9]\d{0,14})(?:\.\d+)?$/;
 
+/**
+ * Cell styles (cellXfs): 0 normal, 1 bold header, 2 and 3 the same with
+ * quotePrefix. Inline strings never run as formulas when the file opens, but
+ * re-editing a cell (F2, Enter) would re-parse "=…" as one. quotePrefix marks
+ * the cell as text, like typing a leading ' in Excel, without changing the
+ * stored value (a literal apostrophe would show up in the data).
+ */
 function cellXml(ref, value, style) {
   const s = value == null ? '' : String(value);
   if (s === '') return '';
-  const st = style ? ' s="' + style + '"' : '';
   if (!style && NUMERIC.test(s)) return '<c r="' + ref + '"><v>' + s + '</v></c>';
   const text = s.length > 32767 ? s.slice(0, 32767) : s;
+  if (looksLikeFormula(text)) style += 2;
+  const st = style ? ' s="' + style + '"' : '';
   const space = /^\s|\s$/.test(text) ? ' xml:space="preserve"' : '';
   return '<c r="' + ref + '" t="inlineStr"' + st + '><is><t' + space + '>' + xmlEscape(text) + '</t></is></c>';
 }
@@ -246,7 +257,12 @@ export async function toXLSX(columns, rows, opts = {}) {
     '<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>' +
     '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +
     '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
-    '<cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs>' +
+    '<cellXfs count="4">' +
+    '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
+    '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>' +
+    '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" quotePrefix="1"/>' +
+    '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1" quotePrefix="1"/>' +
+    '</cellXfs>' +
     '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>' +
     '</styleSheet>';
 
