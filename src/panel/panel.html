@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KoalaScrape</title>
+  <link rel="stylesheet" href="../shared/theme.css">
+  <link rel="stylesheet" href="panel.css">
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z"/><path d="M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3h11l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 3v5h8V3M7 21v-7h10v7"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-shrink" viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></symbol>
+    <symbol id="i-tree" viewBox="0 0 24 24"><path d="M6 3v13a2 2 0 0 0 2 2h4M6 8h6"/><rect x="13" y="5" width="8" height="6" rx="1.5"/><rect x="13" y="15" width="8" height="6" rx="1.5"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+    <symbol id="i-pages" viewBox="0 0 24 24"><rect x="4" y="3" width="12" height="15" rx="2"/><path d="M8 21h10a2 2 0 0 0 2-2V7"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M5 4h14"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></symbol>
+  </svg>
+
+  <header class="app-header">
+    <div class="brand"><img src="../../icons/icon48.png" alt="" width="20" height="20"><span>KoalaScrape</span></div>
+    <div class="target" id="target" title="">
+      <span class="status-dot" id="target-dot"></span>
+      <img id="target-icon" alt="" width="14" height="14" hidden>
+      <span class="target-text" id="target-text">No page</span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-btn-extract" data-tab="extract" aria-selected="true"><svg class="i"><use href="#i-table"/></svg>Extract</button>
+    <button role="tab" id="tab-btn-explorer" data-tab="explorer" aria-selected="false"><svg class="i"><use href="#i-tree"/></svg>Explorer</button>
+    <button role="tab" id="tab-btn-data" data-tab="data" aria-selected="false"><svg class="i"><use href="#i-layers"/></svg>Data <span class="pill" id="data-count">0</span></button>
+  </nav>
+
+  <div class="picking" id="picking" hidden>
+    <span class="pulse"></span>
+    <span id="picking-text">Click an element on the page…</span>
+    <button class="btn sm" id="picking-cancel">Cancel</button>
+  </div>
+  <div class="banner" id="banner" role="status" hidden>
+    <span id="banner-text"></span>
+    <button class="icon-btn sm" id="banner-close" title="Dismiss"><svg class="i"><use href="#i-x"/></svg></button>
+  </div>
+
+  <main>
+    <!-- ======================================================= EXTRACT -->
+    <section class="tab-panel" id="tab-extract" role="tabpanel">
+      <div class="recipe-bar">
+        <select id="recipe-select" title="Saved recipes"></select>
+        <button class="icon-btn" id="recipe-save" title="Save recipe"><svg class="i"><use href="#i-save"/></svg></button>
+        <div class="menu-wrap">
+          <button class="icon-btn" id="recipe-menu-btn" title="Recipe actions" aria-haspopup="menu"><svg class="i"><use href="#i-more"/></svg></button>
+          <div class="menu" id="recipe-menu" role="menu" hidden>
+            <button data-action="new" role="menuitem"><svg class="i"><use href="#i-plus"/></svg>New recipe</button>
+            <button data-action="saveas" role="menuitem"><svg class="i"><use href="#i-save"/></svg>Save as…</button>
+            <button data-action="rename" role="menuitem"><svg class="i"><use href="#i-pencil"/></svg>Rename…</button>
+            <button data-action="delete" role="menuitem"><svg class="i"><use href="#i-trash"/></svg>Delete</button>
+            <hr>
+            <button data-action="import" role="menuitem"><svg class="i"><use href="#i-upload"/></svg>Import JSON…</button>
+            <button data-action="export" role="menuitem"><svg class="i"><use href="#i-download"/></svg>Export JSON</button>
+          </div>
+        </div>
+        <input type="file" id="recipe-file" accept="application/json,.json" hidden>
+      </div>
+
+      <div class="step" id="step-rows">
+        <div class="step-head"><span class="num">1</span><h2>Rows</h2><span class="step-meta" id="row-meta"></span></div>
+        <p class="hint" id="rows-hint">Click one item of the list you want (a product, a result, a table row…). KoalaScrape finds all the similar items.</p>
+        <div class="btn-row">
+          <button class="btn primary" id="pick-list"><svg class="i"><use href="#i-target"/></svg>Select list item</button>
+          <button class="btn" id="auto-detect" title="Find the biggest list on this page"><svg class="i"><use href="#i-sparkles"/></svg>Auto-detect</button>
+        </div>
+        <div class="list-details" id="list-details" hidden>
+          <label class="field-label" for="row-selector">Row selector</label>
+          <div class="selector-line">
+            <input id="row-selector" class="mono" spellcheck="false" autocomplete="off">
+            <span class="count-badge" id="row-badge"></span>
+          </div>
+          <div class="btn-row wrap">
+            <button class="btn sm" id="level-up" title="Rows are too small: use the parent element"><svg class="i"><use href="#i-expand"/></svg>Wider</button>
+            <button class="btn sm" id="level-down" title="Rows are too big: use a child element"><svg class="i"><use href="#i-shrink"/></svg>Narrower</button>
+            <button class="btn sm" id="pick-list2" title="Click the same field in another item, e.g. one in a different section, to generalise the selection"><svg class="i"><use href="#i-plus"/></svg>Second example</button>
+            <button class="btn sm" id="auto-next" title="Show the next list found on the page" hidden><svg class="i"><use href="#i-refresh"/></svg>Next suggestion</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" id="step-columns">
+        <div class="step-head"><span class="num">2</span><h2>Columns</h2><span class="step-meta" id="col-meta"></span></div>
+        <ul class="columns" id="columns"></ul>
+        <p class="hint" id="columns-empty">Columns appear here once rows are selected. Use “Add column” to pick a value inside a row.</p>
+        <div class="btn-row">
+          <button class="btn" id="pick-column"><svg class="i"><use href="#i-plus"/></svg>Add column</button>
+          <button class="btn" id="detect-columns" title="Detect the columns again from the rows"><svg class="i"><use href="#i-sparkles"/></svg>Re-detect</button>
+        </div>
+      </div>
+
+      <div class="step" id="step-pagination">
+        <div class="step-head"><span class="num">3</span><h2>Pagination</h2></div>
+        <div class="seg" id="pag-type" role="radiogroup">
+          <button data-type="none" role="radio">None</button>
+          <button data-type="next" role="radio">Next button</button>
+          <button data-type="scroll" role="radio">Scroll</button>
+          <button data-type="loadmore" role="radio">Load more</button>
+        </div>
+        <div class="pag-body" id="pag-body">
+          <div class="target-row" id="pag-target-row">
+            <button class="btn" id="pick-target"><svg class="i"><use href="#i-target"/></svg><span id="pick-target-text">Select “Next” button</span></button>
+            <span class="target-label" id="target-label"></span>
+          </div>
+          <div class="grid2">
+            <label class="field"><span id="max-pages-label">Max pages</span><input type="number" id="max-pages" min="1" max="100000"></label>
+            <label class="field"><span>Wait after load (ms)</span><input type="number" id="delay-ms" min="0" max="60000" step="100"></label>
+          </div>
+          <p class="hint" id="pag-hint"></p>
+        </div>
+      </div>
+
+      <div class="step" id="step-run">
+        <div class="step-head"><span class="num">4</span><h2>Run</h2></div>
+        <div class="checks">
+          <label><input type="checkbox" id="opt-dedupe"> Skip duplicate rows</label>
+          <label><input type="checkbox" id="opt-append"> Append to existing data</label>
+          <label><input type="checkbox" id="opt-url"> Add “Page URL” column</label>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary lg grow" id="run"><svg class="i fill"><use href="#i-play"/></svg>Run extraction</button>
+          <button class="btn solid-danger lg grow" id="stop" hidden><svg class="i fill"><use href="#i-stop"/></svg>Stop</button>
+        </div>
+        <div class="progress" id="progress" hidden>
+          <div class="progress-bar"><span id="progress-fill"></span></div>
+          <div class="progress-text" id="progress-text"></div>
+        </div>
+      </div>
+
+      <div class="step preview-step">
+        <div class="step-head"><h2>Preview</h2><span class="step-meta" id="preview-meta"></span></div>
+        <div class="table-wrap preview" id="preview"></div>
+      </div>
+    </section>
+
+    <!-- ====================================================== EXPLORER -->
+    <section class="tab-panel" id="tab-explorer" role="tabpanel" hidden>
+      <div class="btn-row">
+        <button class="btn primary grow" id="ex-pick"><svg class="i"><use href="#i-target"/></svg>Indicate element</button>
+        <button class="btn" id="ex-clear" title="Remove highlights from the page"><svg class="i"><use href="#i-x"/></svg>Clear</button>
+      </div>
+      <p class="hint" id="ex-empty">Indicate any element on the page to inspect its position in the DOM tree, build and validate a selector, and read its properties. Tip: while picking, press <kbd>↑</kbd> / <kbd>↓</kbd> to select the parent / child.</p>
+
+      <div id="ex-body" hidden>
+        <div class="card">
+          <div class="card-head">
+            <h3>Visual tree</h3>
+            <div class="mini-nav">
+              <button class="icon-btn sm" id="ex-prev" title="Previous sibling"><svg class="i"><use href="#i-left"/></svg></button>
+              <span class="sib-pos" id="ex-sibpos"></span>
+              <button class="icon-btn sm" id="ex-next" title="Next sibling"><svg class="i"><use href="#i-right"/></svg></button>
+            </div>
+          </div>
+          <ol class="tree" id="ex-tree"></ol>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Selector</h3><span class="count-badge" id="ex-count"></span></div>
+          <textarea id="ex-selector" class="mono" rows="3" spellcheck="false"></textarea>
+          <div class="btn-row wrap">
+            <button class="btn sm" id="ex-highlight"><svg class="i"><use href="#i-eye"/></svg>Highlight</button>
+            <button class="btn sm" id="ex-copy"><svg class="i"><use href="#i-copy"/></svg>Copy</button>
+            <button class="btn sm" id="ex-reset" title="Back to the generated selector"><svg class="i"><use href="#i-refresh"/></svg>Reset</button>
+          </div>
+          <div class="xpath-line">
+            <span class="field-label">XPath</span>
+            <code id="ex-xpath" class="mono"></code>
+            <button class="icon-btn sm" id="ex-copy-xpath" title="Copy XPath"><svg class="i"><use href="#i-copy"/></svg></button>
+          </div>
+          <div class="use-as">
+            <span class="field-label">Use as</span>
+            <button class="btn sm" id="ex-use-rows">Rows</button>
+            <button class="btn sm" id="ex-use-column">Column</button>
+            <button class="btn sm" id="ex-use-next">Next button</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Selector editor</h3>
+            <label class="toggle"><input type="checkbox" id="ex-all-nodes"> all ancestors</label>
+          </div>
+          <p class="hint">Tick the attributes that identify the element. Unticked nodes are skipped; enabling <em>text</em> switches to XPath.</p>
+          <div class="model" id="ex-model"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Properties</h3></div>
+          <table class="props" id="ex-props"></table>
+          <div class="card-head sub"><h3>Attributes</h3></div>
+          <table class="props" id="ex-attrs"></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== DATA -->
+    <section class="tab-panel" id="tab-data" role="tabpanel" hidden>
+      <div class="stats">
+        <div class="stat"><b id="d-rows">0</b><span>rows</span></div>
+        <div class="stat"><b id="d-cols">0</b><span>columns</span></div>
+        <div class="stat"><b id="d-pages">0</b><span>pages</span></div>
+      </div>
+      <p class="meta" id="d-meta"></p>
+      <div class="export-grid">
+        <button class="btn" data-export="xlsx"><svg class="i"><use href="#i-download"/></svg>Excel</button>
+        <button class="btn" data-export="csv"><svg class="i"><use href="#i-download"/></svg>CSV</button>
+        <button class="btn" data-export="json"><svg class="i"><use href="#i-download"/></svg>JSON</button>
+        <button class="btn" id="d-copy" title="Copy as tab-separated values for Excel / Google Sheets"><svg class="i"><use href="#i-copy"/></svg>Copy</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn grow" id="d-open"><svg class="i"><use href="#i-external"/></svg>Open data viewer</button>
+        <button class="btn danger" id="d-clear"><svg class="i"><use href="#i-trash"/></svg>Clear</button>
+      </div>
+      <div class="table-wrap preview" id="d-table"></div>
+    </section>
+  </main>
+
+  <dialog class="modal" id="dialog">
+    <form method="dialog">
+      <h3 id="dialog-title"></h3>
+      <p id="dialog-text"></p>
+      <input id="dialog-input" type="text" autocomplete="off">
+      <!-- OK comes first in the DOM so Enter confirms; CSS shows it on the right. -->
+      <div class="actions">
+        <button class="btn primary" value="ok" id="dialog-ok">OK</button>
+        <button class="btn" value="cancel" id="dialog-cancel" formnovalidate>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="../content/core.js"></script>
+  <script type="module" src="panel.js"></script>
+</body>
+</html>
