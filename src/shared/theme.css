@@ -1,0 +1,148 @@
+/* KoalaScrape design tokens and base components (side panel + data viewer). */
+
+:root {
+  color-scheme: light dark;
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --surface-3: #e7eaef;
+  --border: #e2e5ea;
+  --border-strong: #cdd2da;
+  --text: #0f172a;
+  --text-2: #475467;
+  --text-3: #6b7484;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft: #eef0ff;
+  --accent-text: #3f37c9;
+  --on-accent: #ffffff;
+  --ok: #047857;
+  --ok-soft: #e7f7ef;
+  --warn: #b45309;
+  --warn-soft: #fff6e5;
+  --danger: #c62828;
+  --danger-soft: #fdecec;
+  --focus: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
+  --radius: 10px;
+  --radius-sm: 7px;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.18);
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1014;
+    --surface: #161920;
+    --surface-2: #1d2129;
+    --surface-3: #262b35;
+    --border: #272c36;
+    --border-strong: #363c48;
+    --text: #e8eaef;
+    --text-2: #b3b9c5;
+    --text-3: #8790a0;
+    --accent: #8b93ff;
+    --accent-hover: #a5abff;
+    --accent-soft: #23244a;
+    --accent-text: #c3c7ff;
+    --on-accent: #0b0d16;
+    --ok: #34d399;
+    --ok-soft: #0f2a21;
+    --warn: #fbbf24;
+    --warn-soft: #2b2110;
+    --danger: #f87171;
+    --danger-soft: #2d1515;
+    --shadow-sm: none;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font: 13px/1.45 var(--font);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+/* Icons (inline SVG sprite) */
+.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.i.fill { fill: currentColor; stroke: none; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 32px; padding: 0 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text);
+  font-weight: 550; cursor: pointer; white-space: nowrap; user-select: none;
+  transition: background 0.12s, border-color 0.12s, box-shadow 0.12s, color 0.12s;
+}
+.btn:hover:not(:disabled) { background: var(--surface-2); }
+.btn:focus-visible, .icon-btn:focus-visible { outline: none; box-shadow: var(--focus); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn.danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); }
+.btn.danger:hover:not(:disabled) { background: var(--danger-soft); }
+.btn.solid-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-text); }
+.btn.sm { height: 26px; padding: 0 9px; font-size: 12px; gap: 4px; }
+.btn.sm .i { width: 13px; height: 13px; }
+.btn.lg { height: 38px; font-size: 14px; padding: 0 16px; }
+
+.icon-btn {
+  display: inline-grid; place-items: center; width: 28px; height: 28px; flex: none;
+  border-radius: var(--radius-sm); border: 1px solid transparent; background: transparent;
+  color: var(--text-2); cursor: pointer;
+}
+.icon-btn:hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
+.icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.icon-btn.sm { width: 24px; height: 24px; }
+.icon-btn.sm .i { width: 14px; height: 14px; }
+
+/* Inputs */
+input[type="text"], input[type="number"], input[type="search"], input:not([type]), select, textarea {
+  height: 32px; padding: 0 10px; min-width: 0;
+  border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface);
+}
+select { padding-right: 6px; }
+textarea { height: auto; padding: 8px 10px; resize: vertical; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: var(--focus); }
+input[type="checkbox"] { accent-color: var(--accent); margin: 0; }
+.mono { font-family: var(--mono); font-size: 12px; }
+
+/* Data tables */
+.table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
+table.data { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 12px; }
+table.data th {
+  position: sticky; top: 0; z-index: 1; background: var(--surface-2); text-align: left;
+  font-weight: 600; color: var(--text-2); padding: 7px 10px; border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+table.data td {
+  padding: 6px 10px; border-bottom: 1px solid var(--border); max-width: 260px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: top;
+}
+table.data tr:last-child td { border-bottom: 0; }
+table.data tbody tr:hover td { background: var(--surface-2); }
+table.data .num { color: var(--text-3); text-align: right; width: 1%; font-variant-numeric: tabular-nums; }
+table.data a { color: var(--accent-text); text-decoration: none; }
+table.data a:hover { text-decoration: underline; }
+.swatch { display: inline-block; width: 9px; height: 9px; border-radius: 3px; background: var(--c); flex: none; }
+.empty { color: var(--text-3); text-align: center; padding: 18px 12px; font-size: 12px; }
+
+/* Dialog */
+dialog.modal {
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 0; width: min(360px, calc(100vw - 32px));
+  background: var(--surface); color: var(--text); box-shadow: var(--shadow-lg);
+}
+dialog.modal::backdrop { background: rgba(15, 23, 42, 0.35); }
+dialog.modal form { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+dialog.modal p { margin: 0; color: var(--text-2); white-space: pre-line; }
+dialog.modal h3 { margin: 0; font-size: 14px; }
+dialog.modal .actions { display: flex; flex-direction: row-reverse; justify-content: flex-start; gap: 8px; }

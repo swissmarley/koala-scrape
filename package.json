@@ -1,5 +1,17 @@
 {
-  "dependencies": {
-    "puppeteer": "^24.43.0"
-  }
+  "name": "koala-scrape",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Point-and-click web scraper Chrome extension with a UiPath-style element explorer.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"test/unit/*.test.js\"",
+    "test:e2e": "node --test --test-concurrency=1 \"test/e2e/*.test.js\"",
+    "test:all": "npm test && npm run test:e2e"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "playwright": "~1.56.1"
+  },
+  "license": "MIT"
 }
