@@ -36,9 +36,13 @@ export function toCSV(columns, rows, opts = {}) {
   return (opts.bom === false ? '' : '\uFEFF') + lines.join('\r\n') + '\r\n';
 }
 
-/** Tab separated, for pasting into Excel / Google Sheets. */
+/**
+ * Tab separated, for pasting into Excel / Google Sheets. Tabs and newlines
+ * are flattened first, then the formula guard runs on what actually gets
+ * pasted.
+ */
 export function toTSV(columns, rows) {
-  const cell = (v) => String(v == null ? '' : v).replace(/[\t\r\n]+/g, ' ');
+  const cell = (v) => neutralizeFormula(String(v == null ? '' : v).replace(/[\t\r\n]+/g, ' '));
   return [columns.map((c) => cell(c.name)).join('\t')]
     .concat(rows.map((r) => columns.map((_, i) => cell(r[i])).join('\t')))
     .join('\n');

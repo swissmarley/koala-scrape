@@ -24,6 +24,19 @@ test('CSV quotes, escapes, adds a BOM and neutralises formulas', () => {
   assert.ok(csv.includes(`'@cmd`));
 });
 
+test('TSV neutralises formulas like CSV does', () => {
+  const tsv = toTSV([{ name: '=Name' }, { name: 'Price' }, { name: 'Note' }], [
+    ['=HYPERLINK("x")', '-5', '@cmd'],
+    ['+1 (555)', '+42', '-SUM(A1)'],
+    ['plain', '12.50', 'a=b'],
+  ]);
+  const lines = tsv.split('\n');
+  assert.equal(lines[0], "'=Name\tPrice\tNote");
+  assert.equal(lines[1], `'=HYPERLINK("x")\t-5\t'@cmd`);
+  assert.equal(lines[2], "'+1 (555)\t+42\t'-SUM(A1)");
+  assert.equal(lines[3], 'plain\t12.50\ta=b');
+});
+
 test('TSV flattens tabs and newlines; JSON maps names', () => {
   assert.equal(toTSV([{ name: 'a' }, { name: 'b' }], [['x\ty', 'p\nq']]), 'a\tb\nx y\tp q');
   assert.deepEqual(toJSON([{ name: 'a' }, { name: 'b' }], [['1'], ['2', '3']]), [{ a: '1', b: '' }, { a: '2', b: '3' }]);
